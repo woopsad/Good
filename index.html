@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Web App Pro Max</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0b1220;
+    color:white;
+}
+
+/* ===== INTRO ===== */
+#intro{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:linear-gradient(45deg,#2563eb,#0b1220);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:999;
+    animation:hideIntro 3s forwards;
+}
+
+@keyframes hideIntro{
+    0%{opacity:1}
+    80%{opacity:1}
+    100%{opacity:0;visibility:hidden}
+}
+
+/* LOGIN BOX */
+.box{
+    width:320px;
+    margin:40px auto;
+    padding:20px;
+    background:#1f2937;
+    border-radius:10px;
+}
+
+input,button{
+    width:100%;
+    padding:10px;
+    margin-top:8px;
+}
+
+button{
+    background:#3b82f6;
+    border:none;
+    color:white;
+    cursor:pointer;
+}
+
+/* NAV */
+nav{
+    display:flex;
+    justify-content:space-around;
+    background:#111827;
+    padding:10px;
+}
+
+.page{display:none;padding:15px;}
+.active{display:block;}
+
+.card{
+    background:#1f2937;
+    padding:10px;
+    border-radius:10px;
+    margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== INTRO ===== -->
+<div id="intro">
+    <h1>🔥 WEB PRO MAX</h1>
+</div>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginPage" class="box">
+
+<h2>🔐 Đăng ký</h2>
+<input id="r_user" placeholder="username">
+<input id="r_pass" type="password" placeholder="password">
+<button onclick="register()">Đăng ký</button>
+
+<hr>
+
+<h2>🔑 Đăng nhập</h2>
+<input id="l_user" placeholder="username">
+<input id="l_pass" type="password">
+<button onclick="login()">Đăng nhập</button>
+
+<p id="msg"></p>
+
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app" style="display:none">
+
+<nav>
+<button onclick="show('home')">Home</button>
+<button onclick="show('chat')">Chat</button>
+<button onclick="show('music')">Music</button>
+<button onclick="show('profile')">Profile</button>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="page active">
+<h2>🏠 Home</h2>
+<div class="card">Chào mừng bạn 👋</div>
+</div>
+
+<!-- CHAT -->
+<div id="chat" class="page">
+<h2>💬 Chat</h2>
+
+<div id="boxChat" class="card" style="height:200px;overflow:auto"></div>
+
+<input id="chatInput" placeholder="Nhập tin nhắn">
+<button onclick="send()">Gửi</button>
+</div>
+
+<!-- MUSIC -->
+<div id="music" class="page">
+<h2>🎵 Music</h2>
+
+<input id="musicLink" placeholder="link mp3">
+<button onclick="playMusic()">Phát</button>
+
+<audio id="audio" controls></audio>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+<h2>👤 Profile</h2>
+<div class="card" id="infoUser"></div>
+</div>
+
+</div>
+
+<script>
+
+/* ===== REGISTER ===== */
+function register(){
+    let u = r_user.value;
+    let p = r_pass.value;
+
+    if(!u || !p){
+        msg.innerText="Thiếu thông tin";
+        return;
+    }
+
+    localStorage.setItem("user_"+u,p);
+    msg.innerText="Đăng ký thành công";
+}
+
+/* ===== LOGIN ===== */
+function login(){
+    let u = l_user.value;
+    let p = l_pass.value;
+
+    let pass = localStorage.getItem("user_"+u);
+
+    if(pass === p){
+        msg.innerText="Đăng nhập OK";
+
+        document.getElementById("loginPage").style.display="none";
+        document.getElementById("app").style.display="block";
+
+        infoUser.innerText = "Xin chào: " + u;
+        window.currentUser = u;
+
+    }else{
+        msg.innerText="Sai tài khoản";
+    }
+}
+
+/* ===== MENU ===== */
+function show(id){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+/* ===== CHAT (fake local) ===== */
+function send(){
+    let text = chatInput.value;
+    if(!text) return;
+
+    let div = document.createElement("div");
+    div.innerHTML = "<b>"+currentUser+":</b> "+text;
+
+    boxChat.appendChild(div);
+    chatInput.value="";
+}
+
+/* ===== MUSIC ===== */
+function playMusic(){
+    audio.src = musicLink.value;
+    audio.play();
+}
+
+</script>
+
+</body>
+</html>
